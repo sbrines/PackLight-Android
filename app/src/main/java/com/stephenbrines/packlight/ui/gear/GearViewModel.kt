@@ -35,6 +35,7 @@ data class GearUiState(
 class GearViewModel @Inject constructor(
     private val repo: GearRepository,
     private val fetcher: UrlMetadataFetcher,
+    private val lighterpack: com.stephenbrines.packlight.service.LighterpackService,
 ) : ViewModel() {
 
     private val _state = MutableStateFlow(GearUiState())
@@ -91,4 +92,14 @@ class GearViewModel @Inject constructor(
     }
 
     fun clearFetchedMetadata() = _state.update { it.copy(fetchedMetadata = null, urlFetchError = null) }
+
+    fun importFromCsv(csv: String): com.stephenbrines.packlight.service.LighterpackResult =
+        lighterpack.import_(csv)
+
+    fun importRows(rows: List<com.stephenbrines.packlight.service.LighterpackRow>) =
+        viewModelScope.launch(Dispatchers.IO) {
+            lighterpack.rowsToGearItems(rows).forEach { repo.insert(it) }
+        }
+
+    fun exportCsv(items: List<GearItem>): String = lighterpack.exportGearItems(items)
 }
