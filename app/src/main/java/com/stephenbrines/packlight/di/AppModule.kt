@@ -28,4 +28,5 @@ object AppModule {
     @Provides fun provideTripDao(db: PackLightDatabase): TripDao = db.tripDao()
     @Provides fun providePackListDao(db: PackLightDatabase): PackListDao = db.packListDao()
     @Provides fun provideResupplyDao(db: PackLightDatabase): ResupplyDao = db.resupplyDao()
+    @Provides fun provideWeightSnapshotDao(db: PackLightDatabase): com.stephenbrines.packlight.data.db.dao.WeightSnapshotDao = db.weightSnapshotDao()
 }

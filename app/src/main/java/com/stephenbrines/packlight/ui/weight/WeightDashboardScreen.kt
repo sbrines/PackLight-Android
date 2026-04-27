@@ -1,8 +1,11 @@
 package com.stephenbrines.packlight.ui.weight
 
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Save
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -11,6 +14,7 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.stephenbrines.packlight.data.model.Trip
+import com.stephenbrines.packlight.data.model.WeightSnapshot
 import com.stephenbrines.packlight.service.CategoryWeight
 import com.stephenbrines.packlight.service.WeightSummary
 
@@ -24,10 +28,24 @@ fun WeightDashboardScreen(
     val selectedTrip by viewModel.selectedTrip.collectAsStateWithLifecycle()
     val summary by viewModel.summary.collectAsStateWithLifecycle()
     val displayUnit by viewModel.displayUnit.collectAsStateWithLifecycle()
+    val snapshots by viewModel.snapshots.collectAsStateWithLifecycle()
 
     Scaffold(
         modifier = Modifier.padding(padding),
-        topBar = { TopAppBar(title = { Text("Weight") }) },
+        topBar = {
+            TopAppBar(
+                title = { Text("Weight") },
+                actions = {
+                    if (selectedTrip != null && summary.totalWeightGrams > 0) {
+                        IconButton(onClick = {
+                            viewModel.saveSnapshot(selectedTrip?.name ?: "Trip")
+                        }) {
+                            Icon(Icons.Default.Save, "Save weight snapshot")
+                        }
+                    }
+                }
+            )
+        },
     ) { innerPadding ->
         LazyColumn(
             modifier = Modifier.padding(innerPadding),
@@ -36,6 +54,18 @@ fun WeightDashboardScreen(
         ) {
             item {
                 TripSelector(trips = trips, selected = selectedTrip, onSelect = viewModel::selectTrip)
+            }
+
+            // Weight history
+            if (snapshots.isNotEmpty()) {
+                item {
+                    Text("Weight History", style = MaterialTheme.typography.titleMedium,
+                         modifier = Modifier.padding(top = 8.dp))
+                }
+                items(snapshots.reversed().take(5), key = { it.id }) { snap ->
+                    WeightHistoryRow(snap = snap, format = viewModel::format,
+                                    onDelete = { viewModel.deleteSnapshot(snap) })
+                }
             }
 
             if (selectedTrip != null) {
@@ -113,6 +143,37 @@ private fun ClassificationCard(summary: WeightSummary) {
         Column(Modifier.padding(16.dp)) {
             Text(summary.classification, style = MaterialTheme.typography.titleMedium)
         }
+    }
+}
+
+@Composable
+private fun WeightHistoryRow(
+    snap: WeightSnapshot,
+    format: (Double) -> String,
+    onDelete: () -> Unit,
+) {
+    var showDelete by remember { mutableStateOf(false) }
+    ListItem(
+        headlineContent = { Text(snap.tripName) },
+        supportingContent = {
+            val date = java.text.SimpleDateFormat("MMM d, yyyy", java.util.Locale.US)
+                .format(java.util.Date(snap.recordedAt))
+            Text("$date · ${snap.classification}")
+        },
+        trailingContent = {
+            Text(format(snap.baseWeightGrams),
+                 style = MaterialTheme.typography.bodyMedium.copy(
+                     fontFamily = androidx.compose.ui.text.font.FontFamily.Monospace))
+        },
+        modifier = Modifier.clickable { showDelete = !showDelete },
+    )
+    if (showDelete) {
+        AlertDialog(
+            onDismissRequest = { showDelete = false },
+            title = { Text("Delete snapshot?") },
+            confirmButton = { TextButton(onClick = { onDelete(); showDelete = false }) { Text("Delete") } },
+            dismissButton = { TextButton(onClick = { showDelete = false }) { Text("Cancel") } },
+        )
     }
 }
 

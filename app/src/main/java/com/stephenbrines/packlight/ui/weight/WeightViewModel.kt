@@ -30,6 +30,7 @@ data class WeightUiState(
 class WeightViewModel @Inject constructor(
     private val tripRepo: TripRepository,
     private val gearRepo: GearRepository,
+    private val snapshotDao: com.stephenbrines.packlight.data.db.dao.WeightSnapshotDao,
 ) : ViewModel() {
 
     private val _selectedTrip = MutableStateFlow<Trip?>(null)
@@ -58,6 +59,24 @@ class WeightViewModel @Inject constructor(
 
     val displayUnit: StateFlow<WeightUnit> = _displayUnit.asStateFlow()
     val selectedTrip: StateFlow<Trip?> = _selectedTrip.asStateFlow()
+
+    val snapshots = snapshotDao.getAll()
+        .stateIn(viewModelScope, SharingStarted.Lazily, emptyList())
+
+    fun saveSnapshot(tripName: String) = viewModelScope.launch(Dispatchers.IO) {
+        val s = summary.value
+        snapshotDao.insert(
+            com.stephenbrines.packlight.data.model.WeightSnapshot(
+                tripName = tripName,
+                baseWeightGrams = s.baseWeightGrams,
+                totalWeightGrams = s.totalWeightGrams,
+                itemCount = s.byCategory.sumOf { it.itemCount },
+            )
+        )
+    }
+
+    fun deleteSnapshot(snap: com.stephenbrines.packlight.data.model.WeightSnapshot) =
+        viewModelScope.launch(Dispatchers.IO) { snapshotDao.delete(snap) }
 
     fun selectTrip(trip: Trip?) { _selectedTrip.value = trip }
     fun setUnit(unit: WeightUnit) { _displayUnit.value = unit }
