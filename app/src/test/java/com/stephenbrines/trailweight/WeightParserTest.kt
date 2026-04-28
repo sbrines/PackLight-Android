@@ -7,9 +7,9 @@ import org.junit.Test
 class WeightParserTest {
 
     @Test fun `grams only`() {
-        assertEquals(119.0, WeightParser.parseToGrams("119g"), 0.01)
-        assertEquals(119.0, WeightParser.parseToGrams("119 g"), 0.01)
-        assertEquals(539.0, WeightParser.parseToGrams("539 grams"), 0.01)
+        assertEquals(119.0, WeightParser.parseToGrams("119g")!!, 0.01)
+        assertEquals(119.0, WeightParser.parseToGrams("119 g")!!, 0.01)
+        assertEquals(539.0, WeightParser.parseToGrams("539 grams")!!, 0.01)
     }
 
     @Test fun `ounces only`() {
