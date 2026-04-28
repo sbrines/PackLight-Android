@@ -7,11 +7,11 @@ plugins {
 }
 
 android {
-    namespace = "com.stephenbrines.packlight"
+    namespace = "com.stephenbrines.trailweight"
     compileSdk = 35
 
     defaultConfig {
-        applicationId = "com.stephenbrines.packlight"
+        applicationId = "com.stephenbrines.trailweight"
         minSdk = 26
         targetSdk = 35
         versionCode = 1

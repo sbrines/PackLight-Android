@@ -1,4 +1,4 @@
-# PackLight — Android
+# TrailWeight — Android
 
 **Ultralight backpacking trip planner for Android 8.0+ (API 26+)**
 
@@ -37,7 +37,7 @@
 ## Architecture
 
 ```
-app/src/main/java/com/stephenbrines/packlight/
+app/src/main/java/com/stephenbrines/trailweight/
 ├── data/
 │   ├── db/            # Room database, DAOs, type converters
 │   ├── model/         # GearItem, GearCategory, Trip, PackList, PackListItem,
@@ -78,8 +78,8 @@ app/src/main/java/com/stephenbrines/packlight/
 ## Building
 
 ```bash
-git clone https://github.com/sbrines/PackLight-Android
-cd PackLight-Android
+git clone https://github.com/sbrines/TrailWeight-Android
+cd TrailWeight-Android
 ./gradlew assembleDebug
 ```
 
@@ -143,5 +143,5 @@ And create `res/xml/file_paths.xml`:
 
 ## Related Repos
 
-- **iOS + macOS**: [PackLight-iOS](https://github.com/sbrines/PackLight-iOS)
-- **Landing page**: [PackLight-Web](https://github.com/sbrines/PackLight-Web)
+- **iOS + macOS**: [TrailWeight-iOS](https://github.com/sbrines/TrailWeight-iOS)
+- **Landing page**: [TrailWeight-Web](https://github.com/sbrines/TrailWeight-Web)

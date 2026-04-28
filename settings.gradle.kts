@@ -19,5 +19,5 @@ dependencyResolutionManagement {
     }
 }
 
-rootProject.name = "PackLight"
+rootProject.name = "TrailWeight"
 include(":app")
