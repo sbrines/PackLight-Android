@@ -55,7 +55,7 @@ class CloudSyncService @Inject constructor(
                     batch.set(root.collection("pack_lists").document(pl.id), pl.toMap(), SetOptions.merge())
                     val items = packListDao.getItemsForPackList(pl.id).first()
                     items.forEach { pli ->
-                        batch.set(root.collection("pack_list_items").document(pli.item.id), pli.item.toMap(), SetOptions.merge())
+                        batch.set(root.collection("pack_list_items").document(pli.id), pli.toMap(), SetOptions.merge())
                     }
                 }
                 val resupplyPoints = resupplyDao.getPointsForTrip(trip.id).first()
